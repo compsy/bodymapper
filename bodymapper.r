@@ -14,9 +14,13 @@ lapply(packages, function(pkg)  {
   }
 })
 
-RESPONSES_FILE <- '/Users/ando/owncloud/vault/IKIA/Prototype\ testing\ June\ 2019/responses_ikia_2019-07-01.csv'
-QUESTIONNAIRE_DEFINITION_FILE <- '/Users/ando/owncloud/vault/IKIA/Prototype\ testing\ June\ 2019/questionnaire_ikia_2019-07-01.csv'
-OUTPUT_DIR <- '/Users/ando/owncloud/vault/IKIA/Prototype\ testing\ June\ 2019/drawings'
+RESPONSES_FILE <- '/Users/ando/owncloud/vault/IKIA/Prototype\ testing\ april\ 2019/responses_demo_2019-05-02.csv'
+QUESTIONNAIRE_DEFINITION_FILE <- '/Users/ando/owncloud/vault/IKIA/Prototype\ testing\ april\ 2019/questionnaire_demo_2019-05-02.csv'
+OUTPUT_DIR <- '/Users/ando/owncloud/vault/IKIA/Prototype\ testing\ april\ 2019/drawings'
+if (length(list.files(OUTPUT_DIR, "\\.csv$")) != 0) {
+  stop('The OUTPUT_DIR contains data (.csv files). Please set the OUTPUT_DIR to a directory that doesn\'t contain .csv files.')
+}
+
 COLORS <- c('#e57373', '#64b5f6')
 
 DEBUG <- FALSE
