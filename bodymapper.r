@@ -14,10 +14,10 @@ lapply(packages, function(pkg)  {
   }
 })
 
-INPUT_FILE <- './responses_ikia_2019-05-13.csv'
-OUTPUT_DIR <- './output'
-COLOR_STRONGER <- '#e57373'
-COLOR_WEAKER <- '#64b5f6'
+RESPONSES_FILE <- '/Users/ando/owncloud/vault/IKIA/Prototype\ testing\ June\ 2019/responses_ikia_2019-07-01.csv'
+QUESTIONNAIRE_DEFINITION_FILE <- '/Users/ando/owncloud/vault/IKIA/Prototype\ testing\ June\ 2019/questionnaire_ikia_2019-07-01.csv'
+OUTPUT_DIR <- '/Users/ando/owncloud/vault/IKIA/Prototype\ testing\ June\ 2019/drawings'
+COLORS <- c('#e57373', '#64b5f6')
 
 DEBUG <- FALSE
 FACTOR <- 3
@@ -73,13 +73,22 @@ plot_bodymap <- function(input_data, filename, color) {
   if (!DEBUG) dev.off()
 }
 
-responses <- read.csv2(INPUT_FILE, stringsAsFactors = FALSE, na.strings = c("", "NA"))
+drawing_ids <- function(questionnaire_definition) {
+  return(questionnaire[questionnaire$type %in% 'drawing', 'question_id'])
+}
 
+responses <- read.csv2(RESPONSES_FILE, stringsAsFactors = FALSE, na.strings = c("", "NA"))
+questionnaire <- read.csv2(QUESTIONNAIRE_DEFINITION_FILE, stringsAsFactors = FALSE, na.strings = c("", "NA"))
+
+quest_drawing_ids <- drawing_ids(questionnaire)
 for (i in 1:dim(responses)[1]) {
   response <- responses[i,]
   if (is.na(response$completed_at)) next
-  plot_bodymap(response$v3, paste(response$filled_out_by_id, '_sterker.png', sep = ''), COLOR_STRONGER)
-  plot_bodymap(response$v4, paste(response$filled_out_by_id, '_zwakker.png', sep = ''), COLOR_WEAKER)
+  drawing_idx <- 0
+  for (qid in quest_drawing_ids) {
+    plot_bodymap(response[[qid]], paste(response$filled_out_by_id, '_', qid, '.png', sep = ''), COLORS[1 + (drawing_idx %% length(COLORS))])
+    drawing_idx <- drawing_idx + 1
+  }
 }
 
 cat('All done!\n')
