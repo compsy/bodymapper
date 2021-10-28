@@ -208,6 +208,8 @@ for (i in 1:dim(responses)[1]) {
     drawing_idx <- drawing_idx + 1
   }
 }
-plot_body_outline()
+if (!PLOT_POINTS_OUTSIDE_THE_BODY) {
+  plot_body_outline()
+}
 
 cat('All done!\n')
