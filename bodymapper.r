@@ -177,6 +177,20 @@ plot_bodymap <- function(input_data, filename, color) {
   if (!DEBUG) dev.off()
 }
 
+plot_body_outline <- function() {
+  pp <- readPNG("bodymap_resized.png")
+  if (!DEBUG) {
+    png(filename = paste(OUTPUT_DIR , '/', "bodymap_outline.png", sep = ''),
+        width = WIDTH*FACTOR,
+        height = HEIGHT*FACTOR,
+        pointsize = 20)
+  }
+  plot.new()
+  rasterImage(pp,0,0,1,1)
+  lines(BODY_OUTLINE[,1],1 - BODY_OUTLINE[,2], col = COLORS[1], pch = 20, cex = 0.35, lwd = 3) # y coord is flipped
+  if (!DEBUG) dev.off()
+}
+
 drawing_ids <- function(questionnaire_definition) {
   return(questionnaire[questionnaire$type %in% 'drawing', 'question_id'])
 }
@@ -194,5 +208,6 @@ for (i in 1:dim(responses)[1]) {
     drawing_idx <- drawing_idx + 1
   }
 }
+plot_body_outline()
 
 cat('All done!\n')
