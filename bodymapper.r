@@ -187,7 +187,8 @@ plot_body_outline <- function() {
   }
   plot.new()
   rasterImage(pp,0,0,1,1)
-  lines(BODY_OUTLINE[,1],1 - BODY_OUTLINE[,2], col = COLORS[1], pch = 20, cex = 0.35, lwd = 3) # y coord is flipped
+  # y coord is flipped
+  lines(c(BODY_OUTLINE[,1],BODY_OUTLINE[1,1]),c(1 - BODY_OUTLINE[,2],1 - BODY_OUTLINE[1,2]), col = COLORS[1], pch = 20, cex = 0.35, lwd = 3)
   if (!DEBUG) dev.off()
 }
 
