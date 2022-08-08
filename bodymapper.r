@@ -151,13 +151,6 @@ plot_bodymap <- function(input_data, filename, color) {
   new_input <- eval(parse(text = new_input))
   new_input <- matrix(new_input, ncol = 2, byrow = TRUE)
 
-  pp <- readPNG("bodymap.png")
-  if (!DEBUG) {
-    png(filename = paste(OUTPUT_DIR , '/', filename, sep = ''),
-        width = WIDTH*FACTOR,
-        height = HEIGHT*FACTOR,
-        pointsize = 20)
-  }
   newer_input <- NULL
   for (i in 1:nrow(new_input)) {
     x <- new_input[i,1]
@@ -169,6 +162,18 @@ plot_bodymap <- function(input_data, filename, color) {
       cradius <- getRandomFloat(0, RADIUS);
       newer_input <- c(newer_input, x + cradius * cos(angle) * SCALEFACTOR, y + cradius * sin(angle))
     }
+  }
+  if (is.null(newer_input)) {
+    print(paste("WARNING: all points for",filename,"were outside of the body. Skipping... (set PLOT_POINTS_OUTSIDE_THE_BODY to TRUE to override)"))
+    return()
+  }
+
+  pp <- readPNG("bodymap.png")
+  if (!DEBUG) {
+    png(filename = paste(OUTPUT_DIR , '/', filename, sep = ''),
+        width = WIDTH*FACTOR,
+        height = HEIGHT*FACTOR,
+        pointsize = 20)
   }
   newer_input <- matrix(newer_input, ncol = 2, byrow = TRUE)
   plot.new()
@@ -196,6 +201,10 @@ drawing_ids <- function(questionnaire_definition) {
   return(questionnaire[questionnaire$type %in% 'drawing', 'question_id'])
 }
 
+convert_to_filename_format <- function(filename) {
+  return(gsub(' ','_',gsub(':','.',filename)))
+}
+
 responses <- read.csv2(RESPONSES_FILE, stringsAsFactors = FALSE, na.strings = c("", "NA"))
 questionnaire <- read.csv2(QUESTIONNAIRE_DEFINITION_FILE, stringsAsFactors = FALSE, na.strings = c("", "NA"))
 
@@ -205,10 +214,11 @@ for (i in 1:dim(responses)[1]) {
   if (is.na(response$completed_at)) next
   drawing_idx <- 0
   for (qid in quest_drawing_ids) {
-    plot_bodymap(response[[qid]], paste(response$filled_out_by_id, '_', qid, '.png', sep = ''), COLORS[1 + (drawing_idx %% length(COLORS))])
+    plot_bodymap(response[[qid]], paste(convert_to_filename_format(response$open_from), '_', response$filled_out_by_id, '_', qid, '.png', sep = ''), COLORS[1 + (drawing_idx %% length(COLORS))])
     drawing_idx <- drawing_idx + 1
   }
 }
+
 if (!PLOT_POINTS_OUTSIDE_THE_BODY) {
   plot_body_outline()
 }
